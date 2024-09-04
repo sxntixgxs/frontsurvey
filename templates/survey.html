@@ -6,67 +6,43 @@
     <title>Sistema de Gestión de Encuestas</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body class="bg-gray-100">
     <div id="app" class="container mx-auto p-4">
         <!-- Navegación -->
         <nav class="bg-white shadow-md mb-6 p-4 rounded-lg">
-            <ul class="flex space-x-4">
-                <li><a href="#" @click="currentView = 'surveys'" class="text-blue-600 hover:text-blue-800">Encuestas</a></li>
-                <li v-if="isAdmin"><a href="#" @click="currentView = 'create-survey'" class="text-blue-600 hover:text-blue-800">Crear Encuesta</a></li>
-                <li><button id="logout">Cerrar Sesión</button></li>
+            <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded">Cerrar Sesión</button>
+            <ul id="nav" class="flex space-x-4">
+                <li><a href="#" data-view="surveys" class="text-blue-600 hover:text-blue-800">Encuestas</a></li>
+                <li id="create-survey-link" class="hidden"><a href="#" data-view="create-survey" class="text-blue-600 hover:text-blue-800">Crear Encuesta</a></li>
             </ul>
         </nav>
 
         <!-- Vista principal -->
-        <div v-if="currentView === 'surveys'">
+        <div id="view-surveys" class="hidden">
             <h1 class="text-2xl font-bold mb-4">Encuestas Disponibles</h1>
-            <ul>
-                <li v-for="survey in surveys" :key="survey.id" class="bg-white p-4 rounded-lg shadow mb-4">
-                    {{ survey.name }}
-                    <button @click="viewSurvey(survey.id)" class="ml-2 bg-blue-500 text-white px-2 py-1 rounded">Ver</button>
-                    <button v-if="isAdmin" @click="editSurvey(survey.id)" class="ml-2 bg-yellow-500 text-white px-2 py-1 rounded">Editar</button>
-                    <button v-if="isAdmin" @click="deleteSurvey(survey.id)" class="ml-2 bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
-                </li>
+            <ul id="surveys-list">
+                <!-- Encuestas se llenarán aquí -->
             </ul>
         </div>
 
         <!-- Vista de creación/edición de encuesta -->
-        <div v-if="currentView === 'create-survey' || currentView === 'edit-survey'">
-            <h2 class="text-2xl font-bold mb-4">{{ currentView === 'create-survey' ? 'Crear' : 'Editar' }} Encuesta</h2>
-            <form @submit.prevent="saveSurvey">
+        <div id="view-survey-form" class="hidden">
+            <h2 id="form-title" class="text-2xl font-bold mb-4">Crear Encuesta</h2>
+            <form id="survey-form">
                 <div class="mb-4">
                     <label class="block mb-2">Nombre de la Encuesta</label>
-                    <input v-model="currentSurvey.name" type="text" class="w-full p-2 border rounded" required>
+                    <input id="survey-name" type="text" class="w-full p-2 border rounded" required>
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2">Descripción</label>
-                    <textarea v-model="currentSurvey.description" class="w-full p-2 border rounded" rows="3"></textarea>
+                    <textarea id="survey-description" class="w-full p-2 border rounded" rows="3"></textarea>
                 </div>
                 <h3 class="text-xl font-bold mb-2">Capítulos</h3>
-                <div v-for="(chapter, chapterIndex) in currentSurvey.chapters" :key="chapterIndex" class="mb-4 p-4 border rounded">
-                    <input v-model="chapter.title" type="text" class="w-full p-2 border rounded mb-2" placeholder="Título del Capítulo">
-                    <h4 class="text-lg font-bold mb-2">Preguntas</h4>
-                    <div v-for="(question, questionIndex) in chapter.questions" :key="questionIndex" class="mb-2 p-2 border rounded">
-                        <input v-model="question.text" type="text" class="w-full p-2 border rounded mb-2" placeholder="Texto de la Pregunta">
-                        <select v-model="question.type" class="w-full p-2 border rounded mb-2">
-                            <option value="text">Texto</option>
-                            <option value="multiple_choice">Opción Múltiple</option>
-                        </select>
-                        <div v-if="question.type === 'multiple_choice'">
-                            <div v-for="(option, optionIndex) in question.options" :key="optionIndex" class="flex mb-2">
-                                <input v-model="option.text" type="text" class="flex-grow p-2 border rounded" placeholder="Opción de Respuesta">
-                                <button @click="removeOption(question, optionIndex)" class="ml-2 bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
-                            </div>
-                            <button @click="addOption(question)" class="bg-green-500 text-white px-2 py-1 rounded">Añadir Opción</button>
-                        </div>
-                        <button @click="removeQuestion(chapter, questionIndex)" class="mt-2 bg-red-500 text-white px-2 py-1 rounded">Eliminar Pregunta</button>
-                    </div>
-                    <button @click="addQuestion(chapter)" class="mt-2 bg-blue-500 text-white px-2 py-1 rounded">Añadir Pregunta</button>
-                    <button @click="removeChapter(chapterIndex)" class="mt-2 ml-2 bg-red-500 text-white px-2 py-1 rounded">Eliminar Capítulo</button>
+                <div id="chapters-container">
+                    <!-- Capítulos se llenarán aquí -->
                 </div>
-                <button @click="addChapter" class="mb-4 bg-blue-500 text-white px-2 py-1 rounded">Añadir Capítulo</button>
+                <button type="button" id="add-chapter" class="mb-4 bg-blue-500 text-white px-2 py-1 rounded">Añadir Capítulo</button>
                 <div>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Guardar Encuesta</button>
                 </div>
@@ -74,30 +50,17 @@
         </div>
 
         <!-- Vista de encuesta individual -->
-        <div v-if="currentView === 'view-survey'">
-            <h2 class="text-2xl font-bold mb-4">{{ currentSurvey.name }}</h2>
-            <p class="mb-4">{{ currentSurvey.description }}</p>
-            <div v-for="(chapter, chapterIndex) in currentSurvey.chapters" :key="chapterIndex" class="mb-6">
-                <h3 class="text-xl font-bold mb-2">{{ chapter.title }}</h3>
-                <div v-for="(question, questionIndex) in chapter.questions" :key="questionIndex" class="mb-4">
-                    <p class="font-bold">{{ question.text }}</p>
-                    <div v-if="question.type === 'text'">
-                        <input type="text" class="w-full p-2 border rounded" :placeholder="'Respuesta para ' + question.text">
-                    </div>
-                    <div v-else-if="question.type === 'multiple_choice'">
-                        <div v-for="option in question.options" :key="option.id">
-                            <label>
-                                <input type="radio" :name="'question_' + question.id" :value="option.id">
-                                {{ option.text }}
-                            </label>
-                        </div>
-                    </div>
-                </div>
+        <div id="view-survey-details" class="hidden">
+            <h2 id="survey-title" class="text-2xl font-bold mb-4"></h2>
+            <p id="survey-description-details" class="mb-4"></p>
+            <div id="chapters-details">
+                <!-- Capítulos se llenarán aquí -->
             </div>
-            <button @click="submitSurvey" class="bg-green-500 text-white px-4 py-2 rounded">Enviar Respuestas</button>
+            <button id="submit-survey" class="bg-green-500 text-white px-4 py-2 rounded">Enviar Respuestas</button>
         </div>
     </div>
 
-    <script src="../static/js/auth/main.js" type="module"></script>
+    <script src="/static/js/auth/main.js"></script>
+    <script src="/static/js/auth/logout.js"></script>
 </body>
 </html>
