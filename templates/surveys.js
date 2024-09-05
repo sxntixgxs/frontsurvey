@@ -36,23 +36,26 @@ function displaySurveys(data) {
     } else {
         data.forEach(survey => {
             const surveyElement = document.createElement('div');
-            surveyElement.className = 'bg-gray-900 p-6 rounded-lg shadow-md border border-gray-800';
+            surveyElement.className = 'bg-gray-900 p-4 sm:p-6 rounded-lg shadow-md border border-gray-800';
             surveyElement.innerHTML = `
-                <h2 class="text-xl font-bold text-white mb-3">${survey.name}</h2>
-                <p class="text-gray-400 mb-4">${survey.description}</p>
-                <div class="grid grid-cols-3 gap-4">
-                    <button onclick="readSurvey(${survey.id})" class="bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">
+                <h2 class="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">${survey.name}</h2>
+                <p class="text-sm sm:text-base text-gray-400 mb-4">${survey.description}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+                    <button onclick="readSurvey(${survey.id})" class="w-full bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">
                         Read Content
                     </button>
-                    <button onclick="toggleUpdateForm(${survey.id})" class="bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">
+                    <button onclick="toggleUpdateForm(${survey.id})" class="w-full bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">
                         Update
                     </button>
-                    <button onclick="deleteSurvey(${survey.id})" class="bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">
+                    <button onclick="deleteSurvey(${survey.id})" class="w-full bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">
                         Delete
                     </button>
                 </div>
                 <div id="update-form-${survey.id}" class="update-form hidden mt-4">
                     <!-- El formulario de actualización se insertará aquí -->
+                </div>
+                <div id="survey-content-${survey.id}" class="survey-content hidden mt-4">
+                    <!-- El contenido de la encuesta se insertará aquí -->
                 </div>
             `;
             surveyListDiv.appendChild(surveyElement);
@@ -91,7 +94,7 @@ async function fetchSurveyData(surveyId) {
 
 function generateUpdateForm(survey) {
     return `
-        <h3 class="text-xl font-bold text-white mb-4">Actualizar Encuesta</h3>
+        <h3 class="text-lg sm:text-xl font-bold text-white mb-4">Actualizar Encuesta</h3>
         <form id="update-survey-form-${survey.id}" data-survey-id="${survey.id}" class="space-y-4">
             <div>
                 <label for="name-${survey.id}" class="block text-sm font-medium text-white">Nombre de la Encuesta:</label>
@@ -104,8 +107,8 @@ function generateUpdateForm(survey) {
             <div id="chapters-container-${survey.id}" class="space-y-4">
                 ${survey.chapters.map(chapter => `
                     <div class="chapter bg-gray-800 p-4 rounded-md">
-                        <h4 class="text-lg font-medium text-white mb-2">Capítulo: ${chapter.chapter_title}</h4>
-                        <p class="text-gray-400">Número de Capítulo: ${chapter.chapter_number}</p>
+                        <h4 class="text-base sm:text-lg font-medium text-white mb-2">Capítulo: ${chapter.chapter_title}</h4>
+                        <p class="text-sm text-gray-400">Número de Capítulo: ${chapter.chapter_number}</p>
                         <!-- Agrega inputs para actualizar capítulos aquí -->
                     </div>
                 `).join('')}
