@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Encuesta</title>
+    <link rel="stylesheet" href="/static/css/style_index.css">
+</head>
+<body>
+    <div id="survey-form" class="container mx-auto">
+        <h1 class="text-3xl mb-4">Actualizar Encuesta</h1>
+        <form id="update-survey-form">
+            <!-- Campos de la encuesta -->
+            <div>
+                <label for="name">Nombre de la Encuesta:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div>
+                <label for="description">Descripción:</label>
+                <input type="text" id="description" name="description">
+            </div>
+            <div id="chapters-container">
+                <!-- Contenedor dinámico de capítulos -->
+            </div>
+            <button type="submit">Guardar cambios</button>
+        </form>
+    </div>
+
+    <script src="updateSurvey.js"></script>
+</body>
+</html>

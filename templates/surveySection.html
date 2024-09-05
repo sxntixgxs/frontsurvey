@@ -1,15 +1,61 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Encuestas</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuestas Disponibles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style_index.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom_gray': '#d8d8d8',
+                        'electric_blue': '#007bff',
+                        'neon_violet': '#9d00ff',
+                        'bright_coral': '#ff6f61',
+                        'lemon_yellow': '#ffd700',
+                        'teal': '#008080',
+                        'lime_green': '#32CD32',
+                        'electric_green': '#00FF00'
+                    },
+                    fontFamily: {
+                        'ibm-plex-mono': ['"IBM Plex Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-<body>
-    <h1>Encuestas Disponibles</h1>
-    <div id="survey-list"></div>
+<body class="bg-black min-h-screen p-4">
+    <div class="container mx-auto max-w-4xl">
+        <header class="flex justify-between items-center mb-8">
+            <button id="logout" class="bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">Logout</button>
+            <button id="createSurvey" class="bg-neon_violet hover:bg-lime_green text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime_green">Create Survey</button>
+        </header>
 
-    <!-- Incluir el script -->
+        <main class="bg-black p-8 rounded-lg shadow-md border border-gray-800">
+            <h1 class="text-2xl font-bold text-center text-white mb-8">Surveys Available</h1>
+            <div id="survey-list" class="space-y-6">
+                <!-- Las tarjetas de encuestas se generarán aquí dinámicamente -->
+            </div>
+        </main>
+    </div>
     <script src="surveys.js"></script>
+    <script src="../static/js/auth/logout.js"></script>
+    <script src="../static/js/survey/create.js"></script>
+    <script src="readContent.js"></script>
 </body>
 </html>
