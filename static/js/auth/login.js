@@ -43,7 +43,7 @@ function getLoginFormData() {
 // Función para manejar el éxito del login
 function handleLoginSuccess(data) {
     localStorage.setItem('token', data.token);
-    window.location.href = '/templates/survey.html'; // Redirigir a survey.html
+    window.location.href = '/templates/surveySection.html'; // Redirigir a survey.html
 }
 
 // Función para mostrar el mensaje de error de login
