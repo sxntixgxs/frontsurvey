@@ -3,7 +3,7 @@ const API_URL = 'http://localhost:8080/api/surveys';
 
 
 function loadSurveys() {
-    fetch(API_URL, { // Asegúrate de que esta URL sea correcta
+    fetch(API_URL, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ function loadSurveys() {
     .then(response => response.json())
     .then(data => {
         const surveysList = document.getElementById('surveys-list');
-        surveysList.innerHTML = ''; // Limpiar la lista existente
+        surveysList.innerHTML = '';
         data.forEach(survey => {
             const listItem = document.createElement('li');
             listItem.classList.add('mb-2');
@@ -42,6 +42,7 @@ function loadSurveys() {
 
 
 
+
 // Crear Encuesta
 document.getElementById('survey-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -61,14 +62,15 @@ document.getElementById('survey-form').addEventListener('submit', function(e) {
     fetch(`${API_URL}/create`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(surveyData)
     })
     .then(response => response.json())
     .then(data => {
         alert('Encuesta guardada con éxito.');
-        showView('surveys');
+        showView('view-surveys');
         loadSurveys(); // Actualizar la lista de encuestas
     })
     .catch(error => {
@@ -77,10 +79,33 @@ document.getElementById('survey-form').addEventListener('submit', function(e) {
 });
 
 
+
+
 // Leer Encuestas
 function loadSurveys() {
-    fetch(API_URL)
-    .then(response => response.json())
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('No estás autenticado. Por favor, inicia sesión.');
+        window.location.href = '/index.html'; // Redirige al inicio de sesión si no hay token
+        return;
+    }
+
+    fetch('http://localhost:8080/api/surveys', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (response.status === 403) {
+            alert('No tienes permiso para acceder a esta información.');
+            // Redirige al usuario a la página de inicio de sesión o maneja el error
+            window.location.href = '/index.html';
+            return;
+        }
+        return response.json();
+    })
     .then(data => {
         const surveysList = document.getElementById('surveys-list');
         surveysList.innerHTML = '';
@@ -103,34 +128,35 @@ function loadSurveys() {
 }
 
 
+
 // Editar Encuesta
 function editSurvey(id) {
     fetch(`${API_URL}/${id}`)
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('survey-name').value = data.name;
-        document.getElementById('survey-description').value = data.description;
-        const chaptersContainer = document.getElementById('chapters-container');
-        chaptersContainer.innerHTML = '';
-        data.chapters.forEach((chapter, index) => {
-            const chapterDiv = document.createElement('div');
-            chapterDiv.classList.add('mb-4');
-            chapterDiv.innerHTML = `
-                <label class="block mb-2">Capítulo ${index + 1}</label>
-                <input type="text" class="w-full p-2 border rounded chapter-title" value="${chapter.title}">
-            `;
-            chaptersContainer.appendChild(chapterDiv);
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('survey-name').value = data.name;
+            document.getElementById('survey-description').value = data.description;
+            const chaptersContainer = document.getElementById('chapters-container');
+            chaptersContainer.innerHTML = '';
+            data.chapters.forEach((chapter, index) => {
+                const chapterDiv = document.createElement('div');
+                chapterDiv.classList.add('mb-4');
+                chapterDiv.innerHTML = `
+                    <label class="block mb-2">Capítulo ${index + 1}</label>
+                    <input type="text" class="w-full p-2 border rounded chapter-title" value="${chapter.title}">
+                `;
+                chaptersContainer.appendChild(chapterDiv);
+            });
+            document.getElementById('form-title').textContent = 'Editar Encuesta';
+            document.getElementById('survey-form').onsubmit = function (e) {
+                e.preventDefault();
+                updateSurvey(id);
+            };
+            showView('view-survey-form');
+        })
+        .catch(error => {
+            console.error('Error al cargar la encuesta:', error);
         });
-        document.getElementById('form-title').textContent = 'Editar Encuesta';
-        document.getElementById('survey-form').onsubmit = function(e) {
-            e.preventDefault();
-            updateSurvey(id);
-        };
-        showView('view-survey-form');
-    })
-    .catch(error => {
-        console.error('Error al cargar la encuesta:', error);
-    });
 }
 
 // Actualizar Encuesta
@@ -154,15 +180,15 @@ function updateSurvey(id) {
         },
         body: JSON.stringify(surveyData)
     })
-    .then(response => response.json())
-    .then(data => {
-        alert('Encuesta actualizada con éxito.');
-        showView('surveys');
-        loadSurveys(); // Actualizar la lista de encuestas
-    })
-    .catch(error => {
-        console.error('Error al actualizar la encuesta:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            alert('Encuesta actualizada con éxito.');
+            showView('surveys');
+            loadSurveys(); // Actualizar la lista de encuestas
+        })
+        .catch(error => {
+            console.error('Error al actualizar la encuesta:', error);
+        });
 }
 
 
@@ -171,38 +197,38 @@ function deleteSurvey(id) {
     fetch(`${API_URL}/${id}`, {
         method: 'DELETE'
     })
-    .then(response => {
-        if (response.ok) {
-            alert('Encuesta eliminada con éxito.');
-            loadSurveys(); // Actualizar la lista de encuestas
-        } else {
-            alert('Error al eliminar la encuesta.');
-        }
-    })
-    .catch(error => {
-        console.error('Error al eliminar la encuesta:', error);
-    });
+        .then(response => {
+            if (response.ok) {
+                alert('Encuesta eliminada con éxito.');
+                loadSurveys(); // Actualizar la lista de encuestas
+            } else {
+                alert('Error al eliminar la encuesta.');
+            }
+        })
+        .catch(error => {
+            console.error('Error al eliminar la encuesta:', error);
+        });
 }
 
 
 // Ver Detalles de Encuesta
 function viewSurveyDetails(id) {
     fetch(`${API_URL}/${id}`)
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('survey-title').textContent = data.name;
-        document.getElementById('survey-description-details').textContent = data.description;
-        const chaptersDetails = document.getElementById('chapters-details');
-        chaptersDetails.innerHTML = '';
-        data.chapters.forEach(chapter => {
-            const chapterDiv = document.createElement('div');
-            chapterDiv.classList.add('mb-2');
-            chapterDiv.innerHTML = `<p>${chapter.title}</p>`;
-            chaptersDetails.appendChild(chapterDiv);
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('survey-title').textContent = data.name;
+            document.getElementById('survey-description-details').textContent = data.description;
+            const chaptersDetails = document.getElementById('chapters-details');
+            chaptersDetails.innerHTML = '';
+            data.chapters.forEach(chapter => {
+                const chapterDiv = document.createElement('div');
+                chapterDiv.classList.add('mb-2');
+                chapterDiv.innerHTML = `<p>${chapter.title}</p>`;
+                chaptersDetails.appendChild(chapterDiv);
+            });
+            showView('view-survey-details');
+        })
+        .catch(error => {
+            console.error('Error al cargar los detalles de la encuesta:', error);
         });
-        showView('view-survey-details');
-    })
-    .catch(error => {
-        console.error('Error al cargar los detalles de la encuesta:', error);
-    });
 }
