@@ -178,4 +178,17 @@ async function deleteSurvey(surveyId) {
     }
 }
 
+// Función para eliminar un capítulo
+function deleteChapter(chapterId) {
+    // Lógica para eliminar el capítulo, por ejemplo, hacer una llamada a la API para eliminarlo
+    console.log(`Eliminar capítulo con ID: ${chapterId}`);
+}
+
+// Función para crear un capítulo
+function createChapter() {
+    // Lógica para crear un nuevo capítulo, por ejemplo, mostrar un formulario o hacer una llamada a la API
+    console.log('Crear un nuevo capítulo');
+}
+
+
 document.addEventListener('DOMContentLoaded', getSurveys);
